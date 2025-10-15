@@ -4,6 +4,7 @@ from db.memoria_db import CONTATOS, PROXIMO_ID
 from typing import List, Optional
 from src.utils.query_utils import apply_pagination_and_sorting
 from datetime import datetime
+from src.models.enums import SortingDirection
 
 
 API_KEY_SECRET = "SECRET"
@@ -24,11 +25,10 @@ async def listar_contatos(
     limit: int = 10,
     offset: int = 0,
     sort_by: Optional[str] = 'id', 
-    direction: Optional[str] = 'asc' 
+    direction: SortingDirection = SortingDirection.asc
 ):
     contatos_filtrados = CONTATOS
 
-    # --- Aplica filtros (Permanece aqui) ---
     if nome:
         contatos_filtrados = [
             contato for contato in contatos_filtrados 
@@ -40,15 +40,13 @@ async def listar_contatos(
             contato for contato in contatos_filtrados 
             if contato.empresa and empresa.lower() in contato.empresa.lower()
         ]
-    # --------------------------------------
 
-    # NOVO: Delega Paginação e Ordenação para a função utilitária
     return apply_pagination_and_sorting(
         contatos=contatos_filtrados,
         limit=limit,
         offset=offset,
         sort_by=sort_by,
-        direction=direction
+        direction=direction.value
     )
 
 

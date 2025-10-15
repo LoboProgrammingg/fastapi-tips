@@ -30,7 +30,9 @@ async def listar_contatos(
     nome: Optional[str] = None,      
     empresa: Optional[str] = None,
     limit: int = 10,
-    offset: int = 0
+    offset: int = 0,
+    sort_by: Optional[str] = 'id',
+    direction: Optional[str] = 'asc'
 ):
     contatos_filtrados = CONTATOS
 
@@ -46,6 +48,20 @@ async def listar_contatos(
             if contato.empresa and empresa.lower() in contato.empresa.lower()
         ]
 
+    campos_validos = Contato.model_fields.keys()
+    
+    if sort_by and sort_by in campos_validos:
+        reverse_sort = direction.lower() == 'desc'
+        
+        try:
+            contatos_filtrados = sorted(
+                contatos_filtrados, 
+                key=lambda c: getattr(c, sort_by) if getattr(c, sort_by) is not None else "",
+                reverse=reverse_sort
+            )
+        except Exception:
+            pass 
+        
     return contatos_filtrados[offset : offset + limit]
 
 

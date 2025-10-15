@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "mini-crm-fastapi"
+version = "1.0.0"
+description = "Mini CRM API built with FastAPI (Projeto finalizado após 30 PRs)."
+authors = ["Seu Nome <seu-email@exemplo.com>", "paoeflor <maruzacloud@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "src"}]
+
+# Configuração de ferramentas (ex: isort para ordenar imports)
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

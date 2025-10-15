@@ -4,25 +4,22 @@ from src.db.memoria_db import CONTATOS, PROXIMO_ID
 from typing import List
 from datetime import datetime
 
-router = APIRouter(
-    prefix="/contatos",
-    tags=["Contatos"]
-)
+router = APIRouter(prefix="/contatos", tags=["Contatos"])
 
 
 @router.post("/", response_model=Contato, status_code=201)
 async def criar_contato(contato: Contato):
     global PROXIMO_ID
-    
+
     agora = datetime.now()
 
     contato.id = PROXIMO_ID
-    
-    CONTATOS.append(contato.model_copy(update={
-        "id": PROXIMO_ID,
-        "data_criacao": agora,
-        "data_atualizacao": agora
-    })) 
+
+    CONTATOS.append(
+        contato.model_copy(
+            update={"id": PROXIMO_ID, "data_criacao": agora, "data_atualizacao": agora}
+        )
+    )
     PROXIMO_ID += 1
 
     return CONTATOS[-1]
@@ -46,19 +43,21 @@ async def buscar_contato_por_id(contato_id: int):
 async def atualizar_contato(contato_id: int, contato_atualizado: Contato):
     for index, contato in enumerate(CONTATOS):
         if contato.id == contato_id:
-            
+
             agora = datetime.now()
-            
-            novo_contato = contato_atualizado.model_copy(update={
-                "id": contato_id,
-                "data_criacao": contato.data_criacao,
-                "data_atualizacao": agora
-            })
-            
+
+            novo_contato = contato_atualizado.model_copy(
+                update={
+                    "id": contato_id,
+                    "data_criacao": contato.data_criacao,
+                    "data_atualizacao": agora,
+                }
+            )
+
             CONTATOS[index] = novo_contato
-            
+
             return novo_contato
-            
+
     raise HTTPException(status_code=404, detail="Contato não encontrado")
 
 
@@ -68,5 +67,33 @@ async def excluir_contato(contato_id: int):
         if contato.id == contato_id:
             del CONTATOS[index]
             return
-            
+
+    raise HTTPException(status_code=404, detail="Contato não encontrado")
+
+
+@router.patch("/{contato_id}", response_model=Contato)
+async def atualizar_parcialmente_contato(contato_id: int, contato_patch: Contato):
+    for index, contato_existente in enumerate(CONTATOS):
+        if contato_existente.id == contato_id:
+
+            dados_atualizar = contato_patch.model_dump(exclude_unset=True)
+
+            if not dados_atualizar:
+                return contato_existente
+
+            contato_atualizado = contato_existente.model_copy(update=dados_atualizar)
+
+            agora = datetime.now()
+            final_contato = contato_atualizado.model_copy(
+                update={
+                    "id": contato_id,
+                    "data_criacao": contato_existente.data_criacao,
+                    "data_atualizacao": agora,
+                }
+            )
+
+            CONTATOS[index] = final_contato
+
+            return final_contato
+
     raise HTTPException(status_code=404, detail="Contato não encontrado")

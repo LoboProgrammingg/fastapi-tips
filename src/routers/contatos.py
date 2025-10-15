@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Header
 from src.models.contato import Contato
-from src.db.memoria_db import CONTATOS, PROXIMO_ID
+from db.memoria_db import CONTATOS, PROXIMO_ID
 from typing import List, Optional
+from src.utils.query_utils import apply_pagination_and_sorting
 from datetime import datetime
 
 
@@ -16,66 +17,39 @@ async def verify_api_key(x_api_key: str = Header(..., alias="X-API-Key")):
 router = APIRouter(prefix="/contatos", tags=["Contatos"])
 
 
-@router.post("/", response_model=Contato, status_code=201)
-async def criar_contato(contato: Contato):
-    global PROXIMO_ID
-
-    agora = datetime.now()
-
-    contato.id = PROXIMO_ID
-
-    CONTATOS.append(
-        contato.model_copy(
-            update={"id": PROXIMO_ID, "data_criacao": agora, "data_atualizacao": agora}
-        )
-    )
-    PROXIMO_ID += 1
-
-    return CONTATOS[-1]
-
-
 @router.get("/", response_model=List[Contato])
 async def listar_contatos(
-    nome: Optional[str] = None,
+    nome: Optional[str] = None,      
     empresa: Optional[str] = None,
     limit: int = 10,
     offset: int = 0,
-    sort_by: Optional[str] = "id",
-    direction: Optional[str] = "asc",
+    sort_by: Optional[str] = 'id', 
+    direction: Optional[str] = 'asc' 
 ):
     contatos_filtrados = CONTATOS
 
+    # --- Aplica filtros (Permanece aqui) ---
     if nome:
         contatos_filtrados = [
-            contato
-            for contato in contatos_filtrados
+            contato for contato in contatos_filtrados 
             if nome.lower() in contato.nome.lower()
         ]
-
+        
     if empresa:
         contatos_filtrados = [
-            contato
-            for contato in contatos_filtrados
+            contato for contato in contatos_filtrados 
             if contato.empresa and empresa.lower() in contato.empresa.lower()
         ]
+    # --------------------------------------
 
-    campos_validos = Contato.model_fields.keys()
-
-    if sort_by and sort_by in campos_validos:
-        reverse_sort = direction.lower() == "desc"
-
-        try:
-            contatos_filtrados = sorted(
-                contatos_filtrados,
-                key=lambda c: (
-                    getattr(c, sort_by) if getattr(c, sort_by) is not None else ""
-                ),
-                reverse=reverse_sort,
-            )
-        except Exception:
-            pass
-
-    return contatos_filtrados[offset : offset + limit]
+    # NOVO: Delega Paginação e Ordenação para a função utilitária
+    return apply_pagination_and_sorting(
+        contatos=contatos_filtrados,
+        limit=limit,
+        offset=offset,
+        sort_by=sort_by,
+        direction=direction
+    )
 
 
 @router.get("/{contato_id}", response_model=Contato)

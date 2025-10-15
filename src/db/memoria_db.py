@@ -1,0 +1,2 @@
+CONTATOS = []
+PROXIMO_ID = 1

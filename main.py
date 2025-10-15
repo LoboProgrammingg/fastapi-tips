@@ -2,14 +2,18 @@ from fastapi import FastAPI
 from src.routers import contatos
 from src.routers import health
 from src.core.logging import logger
+from src.middleware.request_id import RequestIDMiddleware
+from src.core.config import settings
 
 app = FastAPI(
-    title="Mini CRM API",
+    title=settings.PROJECT_NAME,
     description="Uma API simples para gerenciar contatos.",
-    version="0.6.0"
+    version=settings.VERSION
 )
+
+app.add_middleware(RequestIDMiddleware)
 
 app.include_router(health.router) 
 app.include_router(contatos.router) 
 
-logger.info("Aplicação FastAPI inicializada e routers carregados. Versão 0.6.0.")
+logger.info(f"Aplicação FastAPI inicializada e routers carregados. Versão {settings.VERSION}.")

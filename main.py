@@ -8,4 +8,4 @@ app = FastAPI(
 
 @app.get("/", tags=["Root"])
 async def read_root():
-    return {"message": "Bem-vindo à API do Mini CRM"}
+    return {"message": "Bem-vindo à API teste do FastAPI"}

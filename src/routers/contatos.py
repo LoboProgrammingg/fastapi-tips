@@ -1,8 +1,17 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Header
 from src.models.contato import Contato
 from src.db.memoria_db import CONTATOS, PROXIMO_ID
-from typing import List, Optional 
+from typing import List, Optional
 from datetime import datetime
+
+
+API_KEY_SECRET = "SECRET"
+
+
+async def verify_api_key(x_api_key: str = Header(..., alias="X-API-Key")):
+    if x_api_key != API_KEY_SECRET:
+        raise HTTPException(status_code=401, detail="Chave de API inválida ou ausente")
+
 
 router = APIRouter(prefix="/contatos", tags=["Contatos"])
 
@@ -27,41 +36,45 @@ async def criar_contato(contato: Contato):
 
 @router.get("/", response_model=List[Contato])
 async def listar_contatos(
-    nome: Optional[str] = None,      
+    nome: Optional[str] = None,
     empresa: Optional[str] = None,
     limit: int = 10,
     offset: int = 0,
-    sort_by: Optional[str] = 'id',
-    direction: Optional[str] = 'asc'
+    sort_by: Optional[str] = "id",
+    direction: Optional[str] = "asc",
 ):
     contatos_filtrados = CONTATOS
 
     if nome:
         contatos_filtrados = [
-            contato for contato in contatos_filtrados 
+            contato
+            for contato in contatos_filtrados
             if nome.lower() in contato.nome.lower()
         ]
-        
+
     if empresa:
         contatos_filtrados = [
-            contato for contato in contatos_filtrados 
+            contato
+            for contato in contatos_filtrados
             if contato.empresa and empresa.lower() in contato.empresa.lower()
         ]
 
     campos_validos = Contato.model_fields.keys()
-    
+
     if sort_by and sort_by in campos_validos:
-        reverse_sort = direction.lower() == 'desc'
-        
+        reverse_sort = direction.lower() == "desc"
+
         try:
             contatos_filtrados = sorted(
-                contatos_filtrados, 
-                key=lambda c: getattr(c, sort_by) if getattr(c, sort_by) is not None else "",
-                reverse=reverse_sort
+                contatos_filtrados,
+                key=lambda c: (
+                    getattr(c, sort_by) if getattr(c, sort_by) is not None else ""
+                ),
+                reverse=reverse_sort,
             )
         except Exception:
-            pass 
-        
+            pass
+
     return contatos_filtrados[offset : offset + limit]
 
 

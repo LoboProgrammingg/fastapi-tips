@@ -1,3 +1,7 @@
+# Core da API
 fastapi
 uvicorn[standard]
-pydantic
+
+# Ferramentas de Produção e Configuração
+gunicorn             # Servidor ASGI para produção
+pydantic-settings    # Gerenciamento de variáveis de ambiente

@@ -6,6 +6,7 @@ from typing import List, Optional
 from src.utils.query_utils import apply_pagination_and_sorting
 from datetime import datetime
 from src.models.enums import SortingDirection
+from src.models.error_response import ErrorResponse
 
 
 API_KEY_SECRET = "SECRET"
@@ -51,7 +52,10 @@ async def listar_contatos(
     )
 
 
-@router.get("/{contato_id}", response_model=Contato)
+@router.get("/{contato_id}", 
+    response_model=Contato,
+    responses={404: {"model": ErrorResponse}} 
+)
 async def buscar_contato_por_id(contato_id: int):
     for contato in CONTATOS:
         if contato.id == contato_id:

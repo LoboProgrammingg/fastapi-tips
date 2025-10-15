@@ -1,2 +1,18 @@
+# Ambiente Virtual
+venv/
+.venv/
+
+# Arquivos de Build/Compilação do Python
+__pycache__/
+*.pyc
+
+# Arquivos de Configuração de Ambiente
 .env
-venv
+.flaskenv
+
+# Arquivos temporários do editor (VS Code, etc.)
+.vscode/
+.idea/
+
+# Arquivos de banco de dados locais (se usássemos SQLite)
+*.sqlite3

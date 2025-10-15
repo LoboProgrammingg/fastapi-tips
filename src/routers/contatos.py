@@ -46,3 +46,13 @@ async def atualizar_contato(contato_id: int, contato_atualizado: Contato):
             return novo_contato
             
     raise HTTPException(status_code=404, detail="Contato não encontrado")
+
+
+@router.delete("/{contato_id}")
+async def excluir_contato(contato_id: int):
+    for index, contato in enumerate(CONTATOS):
+        if contato.id == contato_id:
+            del CONTATOS[index]
+            return
+            
+    raise HTTPException(status_code=404, detail="Contato não encontrado")

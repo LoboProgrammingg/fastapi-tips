@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Header
 from src.models.contato import Contato
 from db.memoria_db import CONTATOS, PROXIMO_ID
+from src.core.config import settings
 from typing import List, Optional
 from src.utils.query_utils import apply_pagination_and_sorting
 from datetime import datetime
@@ -11,7 +12,7 @@ API_KEY_SECRET = "SECRET"
 
 
 async def verify_api_key(x_api_key: str = Header(..., alias="X-API-Key")):
-    if x_api_key != API_KEY_SECRET:
+    if x_api_key != settings.API_KEY_SECRET:
         raise HTTPException(status_code=401, detail="Chave de API inválida ou ausente")
 
 

@@ -7,6 +7,7 @@ from src.utils.query_utils import apply_pagination_and_sorting
 from datetime import datetime
 from src.models.enums import SortingDirection
 from src.models.error_response import ErrorResponse
+from src.core.dependencies import verify_api_key
 
 
 API_KEY_SECRET = "SECRET"

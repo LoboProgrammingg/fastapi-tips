@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from src.db.memoria_db import CONTATOS, PROXIMO_ID
-from src.routers.contatos import verify_api_key
+from src.core.dependencies import verify_api_key
 
 router = APIRouter(
     prefix="/admin",

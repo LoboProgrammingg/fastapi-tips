@@ -27,8 +27,10 @@ async def criar_contato(contato: Contato):
 
 @router.get("/", response_model=List[Contato])
 async def listar_contatos(
-    nome: Optional[str] = None,
-    empresa: Optional[str] = None
+    nome: Optional[str] = None,      
+    empresa: Optional[str] = None,
+    limit: int = 10,
+    offset: int = 0
 ):
     contatos_filtrados = CONTATOS
 
@@ -44,7 +46,7 @@ async def listar_contatos(
             if contato.empresa and empresa.lower() in contato.empresa.lower()
         ]
 
-    return contatos_filtrados
+    return contatos_filtrados[offset : offset + limit]
 
 
 @router.get("/{contato_id}", response_model=Contato)

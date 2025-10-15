@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from src.models.contato import Contato
 from src.db.memoria_db import CONTATOS, PROXIMO_ID
-from typing import List
+from typing import List, Optional 
 from datetime import datetime
 
 router = APIRouter(prefix="/contatos", tags=["Contatos"])
@@ -26,8 +26,25 @@ async def criar_contato(contato: Contato):
 
 
 @router.get("/", response_model=List[Contato])
-async def listar_contatos():
-    return CONTATOS
+async def listar_contatos(
+    nome: Optional[str] = None,
+    empresa: Optional[str] = None
+):
+    contatos_filtrados = CONTATOS
+
+    if nome:
+        contatos_filtrados = [
+            contato for contato in contatos_filtrados 
+            if nome.lower() in contato.nome.lower()
+        ]
+        
+    if empresa:
+        contatos_filtrados = [
+            contato for contato in contatos_filtrados 
+            if contato.empresa and empresa.lower() in contato.empresa.lower()
+        ]
+
+    return contatos_filtrados
 
 
 @router.get("/{contato_id}", response_model=Contato)

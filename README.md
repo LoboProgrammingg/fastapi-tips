@@ -16,8 +16,8 @@ Este projeto é uma API simples de Gerenciamento de Contatos (CRM) desenvolvida 
 
 1.  **Clone o Repositório:**
     ```bash
-    git clone [https://github.com/SEU-USUARIO-CONTA-A/mini-crm-fastapi.git](https://github.com/SEU-USUARIO-CONTA-A/mini-crm-fastapi.git)
-    cd mini-crm-fastapi
+    git clone https://github.com/LoboProgrammingg/fastapi-tips.git
+    cd fastapi-tips
     ```
 2.  **Crie e Ative o Ambiente Virtual:**
     ```bash
@@ -42,3 +42,11 @@ Este projeto é uma API simples de Gerenciamento de Contatos (CRM) desenvolvida 
 ## 🔗 Documentação
 
 A documentação interativa (Swagger UI) está disponível em `http://127.0.0.1:8000/docs`.
+
+## 👤 Autor
+
+**Matheus Lobo** (Matheus Lobo Camara), CTO e cofundador da [WebFrete](https://webfrete.com/). [GitHub](https://github.com/LoboProgrammingg) · [LinkedIn](https://www.linkedin.com/in/matheuslobocamara/)
+
+## 📄 Licença
+
+Distribuído sob a licença MIT. Veja o arquivo [LICENSE](LICENSE).
